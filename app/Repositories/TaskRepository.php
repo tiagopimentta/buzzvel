@@ -2,15 +2,19 @@
 
 namespace App\Repositories;
 
-interface TaskRepository
+use App\Interfaces\TaskRepositoryInterface;
+use App\Models\Task;
+use App\Repositories\Eloquent\BaseRepository;
+
+class TaskRepository extends BaseRepository implements TaskRepositoryInterface
 {
-    public function all();
+    public function __construct()
+    {
+        parent:: __construct(new Task());
+    }
 
-    public function create(array $data);
-
-    public function find($id);
-
-    public function update($id, array $data);
-
-    public function delete($id);
+    public function findUser($user_id)
+    {
+        return Task::where(['user_id'=> $user_id])->first();
+    }
 }

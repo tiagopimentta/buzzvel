@@ -1,47 +1,63 @@
 <?php
+
 namespace App\Http\Controllers\Api;
+
 use App\Http\Controllers\Controller;
-use App\Repositories\TaskRepository;
+use App\Interfaces\TaskRepositoryInterface;
 use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Request;
+
 
 class TaskController extends Controller
 {
-    protected $tasks;
+    public function __construct(protected TaskRepositoryInterface $repository){}
 
-    public function __construct(TaskRepository $tasks)
+    public function index(): JsonResponse
     {
-        $this->tasks = $tasks;
-    }
-
-    public function index()
-    {
-        $tasks = $this->tasks->all();
+        $tasks = $this->repository->all();
         return response()->json($tasks);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
-        $task = $this->tasks->create($request->all());
-        return response()->json($task, 201);
+        $filter = $request->header('user_id');
+        $user = $this->repository->findUser($filter);
+
+        if (!$user) {
+            return response()->json(['error' => 'user not found']);
+        }
+
+        $request['user_id'] = $user->user_id;
+        $request['status'] = 'PENDENTE';
+        $request->only(['title', 'description']);
+
+        $task = $this->repository->create($request->all());
+        return response()->json(['success' => 'Task created success']);
     }
 
-    public function show($id)
+    public function show(int $id): JsonResponse
     {
-        $task = $this->tasks->find($id);
+        $task = $this->repository->find($id);
+        if (!$task) {
+            return response()->json(['error' => 'Task not found']);
+        }
         return response()->json($task);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): JsonResponse
     {
-        $task = $this->tasks->update($id, $request->all());
-        return response()->json($task);
+        $task = $this->repository->update($id, $request->all());
+        return response()->json(['success' => 'Task updated success']);
     }
 
-    public function destroy($id)
+    public function destroy(int $id): JsonResponse
     {
-        $this->tasks->delete($id);
-        return response()->json(null, 204);
-    }
+        $task = $this->repository->find($id);
+        if (!$task) {
+            return response()->json(['error' => 'Task not found']);
+        }
+        $task->delete();
+        return response()->json(['success' => 'Task deleted successfully']);
 
+    }
 }
