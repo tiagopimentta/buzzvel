@@ -18,9 +18,4 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 
-//Route::group(['prefix' => '/task/{id}/'], function(){
-    Route::resource('tasks',TaskController::class);
-//        ->only('index','create','destroy');
-//});
-
-
+Route::resource('tasks',TaskController::class);

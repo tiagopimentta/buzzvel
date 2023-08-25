@@ -22,7 +22,9 @@ class TaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-           'id' => 'required|min:1|int'
+            'title'=>'required',
+            'description'=>'required',
+            'image' => 'mimes:png,jpg,jpeg|max:2048',
         ];
     }
 }

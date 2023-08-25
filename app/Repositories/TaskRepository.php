@@ -1,20 +1,15 @@
 <?php
 
 namespace App\Repositories;
-
-use App\Interfaces\TaskRepositoryInterface;
 use App\Models\Task;
 use App\Repositories\Eloquent\BaseRepository;
 
-class TaskRepository extends BaseRepository implements TaskRepositoryInterface
+class TaskRepository extends BaseRepository
 {
-    public function __construct()
-    {
-        parent:: __construct(new Task());
-    }
+    protected Task $model;
 
-    public function findUser($user_id)
+    public function __construct(Task $model)
     {
-        return Task::where(['user_id'=> $user_id])->first();
+        $this->model = $model;
     }
 }

@@ -3,61 +3,92 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Interfaces\TaskRepositoryInterface;
+use App\Http\Requests\TaskRequest;
+use App\Http\Resources\TaskResource;
+use App\Services\TaskService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
+use Symfony\Component\HttpFoundation\Response;
 
 class TaskController extends Controller
 {
-    public function __construct(protected TaskRepositoryInterface $repository){}
 
-    public function index(): JsonResponse
+    /**
+     * @var TaskService
+     */
+
+    protected TaskService $service;
+
+    public function __construct(TaskService $service)
     {
-        $tasks = $this->repository->all();
-        return response()->json($tasks);
+        $this->service = $service;
     }
 
-    public function store(Request $request): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $filter = $request->header('user_id');
-        $user = $this->repository->findUser($filter);
+        return $this->ok(TaskResource::collection(
+            $this
+                ->service
+                ->getRepository()
+                ->getPaginationList(params: $request->all())
+        ));
+    }
 
-        if (!$user) {
-            return response()->json(['error' => 'user not found']);
+    public function create()
+    {
+        //
+    }
+
+    public function store(TaskRequest $request)
+    {
+        try {
+            $request['user_id'] = $request->header('user_id');
+            $response = $this->service->save($request->all());
+            return $this->success($this->messageSuccessDefault,
+                $response,
+                Response::HTTP_CREATED
+            );
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage());
         }
-
-        $request['user_id'] = $user->user_id;
-        $request['status'] = 'PENDENTE';
-        $request->only(['title', 'description']);
-
-        $task = $this->repository->create($request->all());
-        return response()->json(['success' => 'Task created success']);
     }
 
     public function show(int $id): JsonResponse
     {
-        $task = $this->repository->find($id);
-        if (!$task) {
-            return response()->json(['error' => 'Task not found']);
+        try {
+            return $this->ok($this->service->findUser($id));
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage());
         }
-        return response()->json($task);
     }
 
-    public function update(Request $request, $id): JsonResponse
+    public function edit(string $id)
     {
-        $task = $this->repository->update($id, $request->all());
-        return response()->json(['success' => 'Task updated success']);
+        //
+    }
+
+    public function update(Request $request, int $id): JsonResponse
+    {
+        try {
+            $response = $this->service->update($id, $request->only(['title', 'status', 'file']));
+            return $this->success(
+                $this->messageSuccessDefault,
+                $response,
+                Response::HTTP_CREATED
+            );
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage());
+        }
     }
 
     public function destroy(int $id): JsonResponse
     {
-        $task = $this->repository->find($id);
-        if (!$task) {
-            return response()->json(['error' => 'Task not found']);
+        try {
+            $this->service->getRepository()->find($id);
+            $this->service->delete($id);
+            return $this->success();
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage());
         }
-        $task->delete();
-        return response()->json(['success' => 'Task deleted successfully']);
-
     }
 }
