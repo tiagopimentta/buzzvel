@@ -5,35 +5,45 @@
 
 ## Setup
 
-Necessário docker instalado no ambiente. Após instalar o docker, rodar o comando na linha de comando do projeto
+Need docker installed in the environment. After installing docker, run the command in the project's command line
 
 `docker compose up --build -d`
 
-Containers criados, entre no container e rode o comando de criação de migração e seeds.
+Containers created, enter the container and run the command to create migration and seeds.
 
-a) Entrar no container da aplicação
+a) Enter application container
 
 `docker exec -it test_app bash`
 
-b) Rode o comando artisan para criar as migrações e seeds
+In container run composer install
 
-`php artisan migrate:fresh --seed`
+`composer install`
 
-c) Rodar link simbólico para salvar e mapear imagens inseridas
+b) Run the artisan command to create the migrations and seeds
+
+`php artisan migrate --seed`
+
+c) create symbolic link to save and map inserted images
 
 `php artisan storage:link`
 
-Teste unitários
+Generate swagger documentation
+
+`php artisan l5-swagger:generate`
+
+Unit Test
 
 `php artisan test`
 
-Acessar o mysql via container
+Access mysql in the container
 
 `docker exec -it test_db bash`
 
-Documentação para brincar no sistema
+Documentation to play around on local system and online
 
-`www.google.com.br`
+`http://localhost:8001/api/documentation`
 
-### Divirtam-se!
+`http://srv414158.hstgr.cloud:8001/api/documentation`
+
+### Thanks! &#10084;
 

@@ -55,4 +55,13 @@ class TaskService extends BaseService
 
         return $task;
     }
+
+    public function findUserInTask(int $id, string $user_id)
+    {
+        $user_task = Task::where(['id' => $id])->where(['user_id' => $user_id])->first();
+        if (!$user_task) {
+            throw new Exception('User not found');
+        }
+        return $user_task;
+    }
 }

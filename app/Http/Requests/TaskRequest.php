@@ -24,7 +24,7 @@ class TaskRequest extends FormRequest
         return [
             'title'=>'required',
             'description'=>'required',
-            'image' => 'mimes:png,jpg,jpeg|max:2048',
+            'file' => 'mimes:png,jpg,jpeg|max:2048',
         ];
     }
 }

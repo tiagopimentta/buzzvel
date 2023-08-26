@@ -15,7 +15,7 @@ class TaskFactory extends Factory
         return [
             'title' => fake()->word(),
             'description'=> fake()->sentence(),
-            'status'=> fake()->randomElement(['PENDENTE', 'CONCLUÍDA']),
+            'status'=> fake()->randomElement(['PENDING', 'COMPLETED']),
             'user_id' => User::inRandomOrder()->first()->id,
         ];
     }

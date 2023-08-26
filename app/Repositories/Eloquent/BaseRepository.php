@@ -73,6 +73,7 @@ abstract class BaseRepository
      * @param int $id
      * @return Model|null
      */
+
     public function find(int $id): Model|null
     {
         $model = $this->getModel()->find($id);

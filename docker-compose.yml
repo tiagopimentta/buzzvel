@@ -1,4 +1,4 @@
-version: '4.2'
+version: "3.7"
 services:
     test_app:
         container_name: test_app
@@ -7,13 +7,13 @@ services:
             dockerfile: Dockerfile
         ports:
             - 8001:8000
-        #stdin_open: true
         command: bash -c "composer install && php artisan serve --host=0.0.0.0"
-        #tty: true
         volumes:
             - .:/app
         depends_on:
             - test_db
+        networks:
+            - my_network
 
     test_db:
         container_name: test_db
@@ -25,3 +25,18 @@ services:
             MYSQL_ROOT_PASSWORD: root
         ports:
             - "33062:3306"
+        networks:
+            - my_network
+
+    test_nginx:
+        container_name: test_nginx
+        image: nginx:alpine
+        ports:
+            - 89:80
+        volumes:
+            - ./docker/nginx/:/etc/nginx/conf.d/
+        networks:
+            - my_network
+
+networks:
+    my_network:
