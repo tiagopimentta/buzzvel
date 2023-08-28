@@ -9,15 +9,19 @@ Need docker installed in the environment. After installing docker, run the comma
 
 `docker compose up --build -d`
 
+created .env
+
+`cp .env.example .env`
+
+Generay key:
+
+`php artisan key:generate`
+
 Containers created, enter the container and run the command to create migration and seeds.
 
 a) Enter application container
 
 `docker exec -it test_app bash`
-
-In container run composer install
-
-`composer install`
 
 b) Run the artisan command to create the migrations and seeds
 
