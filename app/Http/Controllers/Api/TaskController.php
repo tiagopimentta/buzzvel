@@ -54,16 +54,24 @@ class TaskController extends Controller
 
 
     /**
-     *
      * @OA\Post (
      *     tags={"Tasks"},
      *     path="/api/tasks",
-     *     summary="Create a tasks",
+     *     summary="Create a task",
+     *     @OA\Parameter(
+     *         name="user_id",
+     *         in="header",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer",
+     *             example=1
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Success",
      *         @OA\JsonContent(
-     *             example="Tasks registered successfully"
+     *             example="Task registered successfully"
      *         )
      *     ),
      *     @OA\Response(
@@ -73,17 +81,21 @@ class TaskController extends Controller
      *     security={{ "jwt": {} }},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             @OA\Property(property="title", type="string", example="with imagem"),
-     *             @OA\Property(property="description", type="string", example="content imagem"),
-     *             @OA\Property(property="file", type="file", example="image.png"),
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 @OA\Property(property="title", type="string", example="titulo post"),
+     *                 @OA\Property(property="description", type="string", example="description post"),
+     *                 @OA\Property(property="file", type="string", format="binary"),
+     *             )
      *         )
      *     )
-     * )
+     * ),
      *
      * @param Request $request
      * @return JsonResponse
      */
+
     public function store(TaskRequest $request)
     {
         try {
@@ -143,16 +155,22 @@ class TaskController extends Controller
     }
 
     /**
-     *
-     * @OA\Put (
+     * @OA\Post (
      *     tags={"Tasks"},
      *     path="/api/tasks/{id}/",
-     *     summary="Update a tasks",
+     *     summary="Update a task",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
      *         description="ID of the task to update",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="user_id",
+     *         in="header",
+     *         required=true,
+     *         description="ID of the user",
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
@@ -168,24 +186,34 @@ class TaskController extends Controller
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             @OA\Property(property="title", type="string", example="New title"),
-     *             @OA\Property(property="description", type="string", example="New description"),
-     *             @OA\Property(property="status", type="string", example="COMPLETED"),
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 @OA\Property(property="_method", type="string", example="PUT"),
+     *                 @OA\Property(property="title", type="string", example="New title"),
+     *                 @OA\Property(property="description", type="string", example="New description"),
+     *                 @OA\Property(property="status", type="string", example="COMPLETED"),
+     *                 @OA\Property(property="file", type="file", format="binary"),
+     *             )
      *         )
+     *     ),
+     *     @OA\Header(
+     *         header="Accept",
+     *         description="Content type",
+     *         @OA\Schema(type="string"),
+     *         required=true,
      *     )
      * )
-     *
-     * @param Request $request
-     * @param int id
-     * @return JsonResponse
      */
+
     public function update(Request $request, int $id): JsonResponse
     {
+        //var_dump($id, $request->header('user_id'), $request->all());die;
+
         try {
             $search_user = $this->service->findUserInTask($id, $request->header('user_id'));
-            if($search_user){
-                $response = $this->service->update($id, $request->only(['title', 'status', 'file']));
+            if ($search_user) {
+                $response = $this->service->update($id, $request->only(['title', 'description', 'status', 'file']));
             }
             return $this->success(
                 $this->messageSuccessDefault,

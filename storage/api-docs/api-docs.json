@@ -23,25 +23,36 @@
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "Create a tasks",
+                "summary": "Create a task",
                 "operationId": "ebbaabc58e3db61374a57c53544959b2",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "properties": {
                                     "title": {
                                         "type": "string",
-                                        "example": "com imagem"
+                                        "example": "titulo post"
                                     },
                                     "description": {
                                         "type": "string",
-                                        "example": "conteúdo com imagem"
+                                        "example": "description post"
                                     },
                                     "file": {
-                                        "type": "file",
-                                        "example": "image.png"
+                                        "type": "string",
+                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
@@ -55,7 +66,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {},
-                                "example": "Tasks registered successfully"
+                                "example": "Task registered successfully"
                             }
                         }
                     },
@@ -105,12 +116,12 @@
             }
         },
         "/api/tasks/{id}/": {
-            "put": {
+            "post": {
                 "tags": [
                     "Tasks"
                 ],
-                "summary": "Update a tasks",
-                "operationId": "f6c767ef6bb12caf46f5c7af0a84a035",
+                "summary": "Update a task",
+                "operationId": "29ad30a5ba21ea8db12354a227c1e0d6",
                 "parameters": [
                     {
                         "name": "id",
@@ -120,25 +131,42 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "header",
+                        "description": "ID of the user",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 ],
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "properties": {
+                                    "_method": {
+                                        "type": "string",
+                                        "example": "PUT"
+                                    },
                                     "title": {
                                         "type": "string",
-                                        "example": "Novo título"
+                                        "example": "New title"
                                     },
                                     "description": {
                                         "type": "string",
-                                        "example": "Nova Descrição"
+                                        "example": "New description"
                                     },
                                     "status": {
                                         "type": "string",
-                                        "example": "CONCLUÍDO"
+                                        "example": "COMPLETED"
+                                    },
+                                    "file": {
+                                        "type": "file",
+                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
